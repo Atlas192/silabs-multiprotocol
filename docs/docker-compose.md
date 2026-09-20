@@ -6,7 +6,7 @@ container together with a full Zigbee/Matter stack:
 | Service               | Image                                   | Purpose                                        |
 |-----------------------|-----------------------------------------|------------------------------------------------|
 | `silabs-multiprotocol` | built from the `Dockerfile` in this repo | Zigbee + Thread multiprotocol host (CPCd, zigbeed, OTBR) |
-| `matterjs-server`     | `ghcr.io/matter-js/matterjs-server:1.4` | Matter bridge / server (shares network namespace with the multiprotocol container) |
+| `matterjs-server`     | `ghcr.io/matter-js/matterjs-server:1.4` | Matter bridge / server (**sidecar** of the multiprotocol container — shares its network namespace, see note below) |
 | `mqtt-server`         | `eclipse-mosquitto:2.0.22`              | MQTT broker for Zigbee2MQTT                   |
 | `zigbee2mqtt`         | `koenkk/zigbee2mqtt:2.13`               | Zigbee gateway → MQTT                         |
 
@@ -228,14 +228,34 @@ same `configuration.yaml`. The example uses Mosquitto's no-auth config
 (`/mosquitto-no-auth.conf`) — for anything beyond an isolated internal
 network, configure authentication instead.
 
-### Matter server
+### Matter server (sidecar)
 
-`matterjs-server` shares the **network namespace** of
-`silabs-multiprotocol` (`network_mode: "service:silabs-multiprotocol"`),
-so it reaches the Thread network of the OTBR directly through the
-multiprotocol container. Configure the Matter.js server to use the local
-OpenThread Border Router; the Thread dataset persists in the
-`thread-data` volume (`/data/thread`).
+> **Why a sidecar?** `matterjs-server` runs with
+> `network_mode: "service:silabs-multiprotocol"`, i.e. it shares the
+> **network namespace** of the multiprotocol container instead of getting
+> its own `ipvlan` address. This is deliberate: it **solves the IPv6
+> routing issues** that arise when Matter runs in a separate container/
+> network namespace. Thread is IPv6-only, and the OTBR routes between
+> `wpan0` and the infrastructure interface. Giving Matter its own network
+> namespace would require IPv6 packets to be routed between namespaces
+> (via the `ipvlan`), which the internal `ipvlan` setup does not reliably
+> provide — border routing, mDNS announcements and direct device traffic
+> would break. Sharing the namespace means Matter simply talks to the
+> Thread network through the multiprotocol container's own `eth0`/`wpan0`.
+
+> **The `eth0` interface of the `silabs-multiprotocol` container still
+> needs a global IPv6 address** for this communication to work — it is the
+> infrastructure-side endpoint the OTBR routes Thread traffic to and the
+> address Matter uses to reach the Thread network. Make sure the `ipvlan`
+> network hands out an IPv6 address to the container (the example network
+> defines `fd00:1e::/64` and `enable_ipv6: true`); if needed, assign a
+> fixed `ipv6_address` to the `silabs-multiprotocol` service so the
+> address survives restarts. The health of the setup can be checked with
+> `docker compose exec silabs-multiprotocol ip -6 addr show eth0`.
+
+Configure the Matter.js server to use the local OpenThread Border
+Router; the Thread dataset persists in the `thread-data` volume
+(`/data/thread`).
 
 ### Verify
 
