@@ -218,8 +218,7 @@ of the multiprotocol container. In the Zigbee2MQTT configuration
 serial:
   port: tcp://172.30.0.22:9627   # = SILABS_IP:ZIGBEE_TCP_PORT (default 9627)
 adapter:
-  type: ezsp
-  baudrate: 115200
+  type: ember
 ```
 
 ### Zigbee2MQTT → MQTT
