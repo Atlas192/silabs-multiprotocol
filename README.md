@@ -396,17 +396,23 @@ owners and are used here for identification purposes only.
 ### License situation of the redistributed packages
 
 This repository contains **only build instructions** (a Dockerfile) and
-documentation. **No Silicon Labs binaries or source code are stored in this
-repository.** All third-party software is downloaded at image build time from
-the official upstream sources listed in
+documentation, licensed under the [MIT License](LICENSE). **No Silicon Labs
+binaries or source code are stored in this repository.** All third-party
+software is downloaded at image build time from the official upstream
+sources listed in
 [Upstream Sources](#upstream-sources).
+
+> The MIT license applies **exclusively** to the files authored in this
+> repository (Dockerfile, README, docs). It does **not** extend to the
+> third-party artifacts downloaded during the build — in particular the
+> Silicon Labs packages, which remain governed by the MSLA.
 
 The packages installed by the Dockerfile carry **different licenses** — the
 important distinction is between the build recipe and the built image:
 
 | Component                        | License            | Notes                          |
 |----------------------------------|--------------------|--------------------------------|
-| This repository (Dockerfile, docs)| yours to choose    | No third-party code included   |
+| This repository (Dockerfile, docs)| **MIT** ([LICENSE](LICENSE)) | Covers only this repo's own files |
 | `debian:bookworm-slim` + apt pkgs | DFSG-free (GPL, etc.) | via official Debian repos  |
 | `s6-overlay`                    | BSD-3-Clause       | permissive                      |
 | `libcpc3` / `cpcd` 4.8.0         | Silicon Labs MSLA  | **not** open source             |
