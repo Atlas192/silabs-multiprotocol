@@ -377,6 +377,10 @@ docker run -d \
 Then point Zigbee2MQTT at `tcp://<host>:9627` and manage Thread via
 `docker exec silabs-multiprotocol ot-ctl …`.
 
+> A complete, ready-to-adapt **docker-compose** example hosting this
+> container together with Zigbee2MQTT, Mosquitto and a Matter.js server
+> can be found in [docs/docker-compose.md](docs/docker-compose.md).
+
 ---
 
 ## Licensing and Trademark Notice
