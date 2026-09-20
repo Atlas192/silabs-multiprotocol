@@ -25,7 +25,8 @@ Sonoff Dongle Lite MG21 / EFR32MG21 (and other EFR32MG2x co-processors).
 9. [Healthcheck](#healthcheck)
 10. [Building](#building)
 11. [Running](#running)
-12. [References](#references)
+12. [Licensing and Trademark Notice](#licensing-and-trademark-notice)
+13. [References](#references)
 
 ---
 
@@ -375,6 +376,91 @@ docker run -d \
 
 Then point Zigbee2MQTT at `tcp://<host>:9627` and manage Thread via
 `docker exec silabs-multiprotocol ot-ctl …`.
+
+---
+
+## Licensing and Trademark Notice
+
+### No affiliation
+
+This project is **not affiliated with, endorsed by, or sponsored by
+Silicon Laboratories Inc.** "Silicon Labs", "SiLabs", "Simplicity SDK",
+"Gecko SDK", EFR32 and related names are trademarks of Silicon Laboratories
+Inc. All product names and trademarks are the property of their respective
+owners and are used here for identification purposes only.
+
+### License situation of the redistributed packages
+
+This repository contains **only build instructions** (a Dockerfile) and
+documentation. **No Silicon Labs binaries or source code are stored in this
+repository.** All third-party software is downloaded at image build time from
+the official upstream sources listed in
+[Upstream Sources](#upstream-sources).
+
+The packages installed by the Dockerfile carry **different licenses** — the
+important distinction is between the build recipe and the built image:
+
+| Component                        | License            | Notes                          |
+|----------------------------------|--------------------|--------------------------------|
+| This repository (Dockerfile, docs)| yours to choose    | No third-party code included   |
+| `debian:bookworm-slim` + apt pkgs | DFSG-free (GPL, etc.) | via official Debian repos  |
+| `s6-overlay`                    | BSD-3-Clause       | permissive                      |
+| `libcpc3` / `cpcd` 4.8.0         | Silicon Labs MSLA  | **not** open source             |
+| `ot-br-posix` 3.1.1.0            | Silicon Labs MSLA  | **not** open source             |
+| `zigbeed` 9.1.1                  | Silicon Labs MSLA  | **not** open source             |
+
+The **Silicon Labs Master Software License Agreement (MSLA)**
+(<https://www.silabs.com/about-us/legal/master-software-license-agreement>)
+is a proprietary source-available/license agreement, *not* an open-source
+license. By downloading the packages at build time, **each builder accepts
+the MSLA directly with Silicon Labs** — that is exactly why this project
+distributes a Dockerfile rather than pre-built images.
+
+Key MSLA conditions relevant to this container (summarized, non-authoritative;
+read the full agreement yourself):
+
+- Software is licensed for use **in conjunction with Silicon Labs Devices**
+  (Authorized Applications), not on a standalone basis.
+- Object code may only be distributed to end-user customers **incorporated
+  into Authorized Applications** (§4.1.6) — not as a freely downloadable
+  standalone artifact.
+- Sublicensing/transfer to third parties is prohibited (§5.1.1); end-user
+  restrictions must be passed down (§5.4).
+- Redistributing the packages **under an open-source license is prohibited**
+  (§5.1.3, §7.3.1). This Dockerfile and this repository therefore deliberately
+  carry **no open-source license header claim over the downloaded packages**
+  and must not be represented as making them open source.
+- Copyright/proprietary notices shipped in the packages must not be removed
+  (§5.1.6) — this image installs the `.deb` files unmodified and strips no
+  notice files.
+- The MSLA excludes "Unauthorized Use" (aerospace, medical Class III,
+  implantable, life-support, automotive) — do not deploy this container in
+  such contexts.
+
+### ⚠️ Do not publish pre-built images without permission
+
+Because of the MSLA terms above:
+
+> **Do not push the built container image to a public registry.**
+> Building the image is intended for **personal/internal use with your own
+> Silicon Labs hardware**. Public redistribution of a ready-made image is
+> outside what the MSLA clearly permits for a third party and would require
+> written permission from Silicon Labs.
+
+If you need image distribution beyond your own systems, contact Silicon Labs
+support first. (Note that Silicon Labs themselves previously offered an
+official `silabsinc/multiprotocol` container and have since deprecated it in
+favor of the self-built Debian packages this project uses — that is the
+distribution model intended by Silicon Labs.)
+
+### Disclaimer
+
+THE DOCKERFILE, SCRIPTS AND DOCUMENTATION IN THIS REPOSITORY ARE PROVIDED
+"AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. THE AUTHOR(S) ARE
+NOT LIABLE FOR ANY DAMAGES ARISING FROM THE USE OF THIS SOFTWARE OR THE
+RESULTING CONTAINER IMAGE. THE SILICON LABS PACKAGES ARE PROVIDED "AS IS"
+UNDER THE MSLA. THIS PROJECT IS NOT LEGAL ADVICE; CONSULT A LAWYER REGARDING
+YOUR PARTICULAR REDISTRIBUTION OR DEPLOYMENT SCENARIO.
 
 ---
 
